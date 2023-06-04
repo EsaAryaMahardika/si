@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>{{ $nama }} - Admin RusakApa</title>
+    <title>@yield('title') - Admin RusakApa</title>
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="css/datatables.css" />
     <link rel="stylesheet" href="css/form.css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -40,7 +39,7 @@
         </ul>
     </nav>
     <div class="header">
-        <h1>{{ $nama }}</h1>
+        <h1>@yield('title')</h1>
     </div>
     <div class="content">
         @if(Session::has('success'))
@@ -53,7 +52,6 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
     <script src="https://cdn.datatables.net/v/dt/dt-1.13.4/fc-4.2.2/fh-3.3.2/r-2.4.1/datatables.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="js/admin.js"></script>
     <script src="js/ajax.js"></script>
 </body>

@@ -1,4 +1,5 @@
 @extends('layout.admin')
+@section('title', 'Pengguna')
 @section('content')
 <table id="user">
     <thead>
@@ -23,12 +24,12 @@
                 <input type="number" placeholder="WhatsApp" name="tlp" id="tlp"/>
               </div>
               <div class="input-group">
-                <select name="id_prov" id="id_prov">
+                <select name="id_prov" id="prov">
                     <option value="">Pilih Provinsi</option>
                 </select>
               </div>
               <div class="input-group">
-                <select name="id_kab" id="id_kab">
+                <select name="id_kab" id="kab">
                     <option value="">Pilih Kabupaten</option>
                 </select>
               </div>

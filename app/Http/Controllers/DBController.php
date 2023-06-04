@@ -14,13 +14,13 @@ use App\Models\provinsi;
 use App\Models\kabupaten;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
 
 class DBController extends Controller
 {
     //<--- Dashboard --->//
     public function dashboard()
     {
-        $nama = 'Dashboard';
         $aturan = aturan::all();
         $gejala = gejala::all();
         $kerusakan = kerusakan::all();
@@ -29,15 +29,17 @@ class DBController extends Controller
         $pengguna = pengguna::all();
         $tutorial = tutorial::all();
         $teknisi = teknisi::all();
-        return view('admin/dashboard', ['nama' => $nama]);
+        return view('admin/dashboard');
     }
     // <--- Kerusakan ---> //
     public function crash()
     {
-        $nama = 'Kerusakan';
-        $kerusakan = kerusakan::all();
-        $tutorial = tutorial::get(['id', 'nama']);
-        return view('admin/crash', ['nama' => $nama, 'kerusakan' => $kerusakan, 'tutorial' => $tutorial]);
+        $tutorial = tutorial::all();
+        $kerusakan = DB::table('kerusakan')
+            ->join('tutorial', 'kerusakan.tutorial_id', '=', 'tutorial.id')
+            ->select('kerusakan.id as id_crash', 'kerusakan.nama as crash', 'kerusakan.deskripsi', 'kerusakan.tutorial_id', 'tutorial.nama as tutorial')
+            ->get();
+        return view('admin/crash', compact('kerusakan', 'tutorial'));
     }
     public function crash_input(Request $request)
     {
@@ -47,21 +49,24 @@ class DBController extends Controller
     }
     public function crash_update(Request $request, $id)
     {
-        kerusakan::all();
+        $kerusakan = kerusakan::find($id);
+        $kerusakan->update($request->all());
+        Session::flash('success', 'Data berhasil diubah.');
         return redirect('/crash');
-        // $kerusakan = kerusakan::with('tutorial')->findOrFail($id);
-        // $tutorial = tutorial::where('id', '!=', $kerusakan->tutorial_id)->get(['id', 'nama']);
-        // return view('crash', ['kerusakan' => $kerusakan, 'tutorial' => $tutorial]);
     }
-    public function crash_delete()
+    public function crash_delete($id)
     {
+        $kerusakan = kerusakan::find($id);
+        $kerusakan->delete();
+        Session::flash('success', 'Data berhasil dihapus.');
+        return redirect('/crash');
     }
     // <--- Teknisi --->//
     public function engineer()
     {
-        $nama = 'Teknisi';
+        $prov = provinsi::all();
         $teknisi = teknisi::all();
-        return view('admin/engineer', ['nama' => $nama], ['teknisi' => $teknisi]);
+        return view('admin/engineer', compact('teknisi', 'prov'));
     }
     public function engineer_input(Request $request)
     {
@@ -69,7 +74,7 @@ class DBController extends Controller
         Session::flash('success', 'Data berhasil ditambahkan.');
         return redirect('/engineer');
     }
-    public function engineer_update()
+    public function engineer_update(Request $request, $id)
     {
     }
     public function engineer_delete()
@@ -78,9 +83,8 @@ class DBController extends Controller
     //<--- Gejala --->//
     public function gejala()
     {
-        $nama = 'Gejala';
         $gejala = gejala::all();
-        return view('admin/gejala', ['nama' => $nama], ['gejala' => $gejala]);
+        return view('admin/gejala', compact('gejala'));
     }
     public function gejala_input(Request $request)
     {
@@ -88,25 +92,36 @@ class DBController extends Controller
         Session::flash('success', 'Data berhasil ditambahkan.');
         return redirect('/gejala');
     }
-    public function gejala_update()
+    public function gejala_update(Request $request, $id)
     {
+        $gejala = gejala::find($id);
+        $gejala->update($request->all());
+        Session::flash('success', 'Data berhasil diubah.');
+        return redirect('/gejala');
     }
-    public function gejala_delete()
+    public function gejala_delete($id)
     {
+        $gejala = gejala::find($id);
+        $gejala->delete();
+        Session::flash('success', 'Data berhasil dihapus.');
+        return redirect('/gejala');
     }
     //<--- Laporan --->//
     public function report()
     {
-        $nama = 'Laporan';
         $laporan = laporan::all();
-        return view('admin/report', ['nama' => $nama], ['laporan' => $laporan]);
+        return view('admin/report', compact('laporan'));
     }
     //<--- Aturan --->//
     public function rule()
     {
-        $nama = 'Aturan';
-        $aturan = aturan::all();
-        return view('admin/rule', ['nama' => $nama], ['aturan' => $aturan]);
+        $aturan = aturan::join('kerusakan', 'kerusakan.id', '=', 'aturan.id_rusak')
+            ->join('gejala', 'gejala.id', '=', 'aturan.id_gejala')
+            ->select('aturan.id', 'aturan.id_rusak', 'aturan.id_gejala', 'gejala.keterangan as gejala', 'kerusakan.nama as crash')
+            ->get();
+        $gejala = gejala::all();
+        $crash = kerusakan::all();
+        return view('admin/rule', compact('aturan','gejala','crash'));
     }
     public function rule_input(Request $request)
     {
@@ -123,9 +138,8 @@ class DBController extends Controller
     //<--- Tutorial --->//
     public function tutorial()
     {
-        $nama = 'Tutorial';
         $tutorial = tutorial::all();
-        return view('admin/tutorial', ['nama' => $nama], ['tutorial' => $tutorial]);
+        return view('admin/tutorial', compact('tutorial'));
     }
     public function tutorial_input(Request $request)
     {
@@ -138,31 +152,56 @@ class DBController extends Controller
         Session::flash('success', 'Data berhasil ditambahkan');
         return redirect('/tutorial');
     }
-    public function tutorial_update()
+    public function tutorial_update(Request $request, $id)
     {
+        $tutorial = tutorial::find($id);
+        if ($request->file('file')) {
+            $path = $request->file('file')->store('tutorial');
+            $filePath = pathinfo($path, PATHINFO_BASENAME);
+            $tutorial->update([
+                'nama' => $request->input('nama'),
+                'file' => $filePath,
+            ]);
+        } else {
+            $tutorial->update([
+                'nama' => $request->input('nama')
+            ]);
+        }
+        Session::flash('success', 'Data berhasil diubah');
+        return redirect('/tutorial');
     }
-    public function tutorial_delete()
+    public function tutorial_delete($id)
     {
+        $tutorial = tutorial::find($id);
+        $tutorial->delete();
+        Session::flash('success', 'Data berhasil dihapus.');
+        return redirect('/tutorial');
     }
     //<--- User --->//
     public function user()
     {
-        $nama = 'Pengguna';
         $pengguna = pengguna::all();
-        return view('admin/user', ['nama' => $nama], ['pengguna' => $pengguna]);
+        return view('admin/user', compact('pengguna'));
     }
-    public function user_update()
+    public function user_update(Request $request, $id)
     {
+        $pengguna = pengguna::find($id);
+        $pengguna->update($request->all());
+        Session::flash('success', 'Data berhasil diubah.');
+        return redirect('/user');
     }
-    public function user_delete()
+    public function user_delete($id)
     {
+        $pengguna = pengguna::find($id);
+        $pengguna->delete();
+        Session::flash('success', 'Data berhasil dihapus.');
+        return redirect('/user');
     }
     //<--- Provinsi --->//
     public function provinsi()
     {
-        $nama = 'Provinsi';
         $provinsi = provinsi::all();
-        return view('admin/provinsi', ['nama' => $nama], ['provinsi' => $provinsi]);
+        return view('admin/provinsi', compact('provinsi'));
     }
     public function provinsi_input(Request $request)
     {
@@ -170,20 +209,29 @@ class DBController extends Controller
         Session::flash('success', 'Data berhasil ditambahkan.');
         return redirect('/provinsi');
     }
-    public function provinsi_update()
+    public function provinsi_update(Request $request, $id)
     {
-        $provinsi = provinsi::all();
-        return view('admin/provinsi', ['provinsi' => $provinsi]);
+        $provinsi = provinsi::find($id);
+        $provinsi->update($request->all());
+        Session::flash('success', 'Data berhasil diubah.');
+        return redirect('/provinsi');
     }
-    public function provinsi_delete()
+    public function provinsi_delete($id)
     {
+        $provinsi = provinsi::find($id);
+        $provinsi->delete();
+        Session::flash('success', 'Data berhasil dihapus.');
+        return redirect('/provinsi');
     }
     //<--- Kabupaten --->//
     public function kabupaten()
     {
-        $nama = 'Kabupaten';
-        $kabupaten = kabupaten::all();
-        return view('admin/kabupaten', ['nama' => $nama], ['kabupaten' => $kabupaten]);
+        $kabupaten = DB::table('kabupaten')
+            ->join('provinsi', 'provinsi.id', '=', 'kabupaten.id_prov')
+            ->select('kabupaten.id as id_kab', 'kabupaten.nama as nama_kab', 'kabupaten.id_prov', 'provinsi.nama as nama_prov')
+            ->get();
+        $provinsi = provinsi::all();
+        return view('admin/kabupaten', compact('kabupaten','provinsi'));
     }
     public function kabupaten_input(Request $request)
     {
@@ -191,20 +239,23 @@ class DBController extends Controller
         Session::flash('success', 'Data berhasil ditambahkan.');
         return redirect('/kabupaten');
     }
-    public function kabupaten_update()
+    public function kabupaten_update(Request $request, $id)
     {
+        $kabupaten = kabupaten::find($id);
+        $kabupaten->update($request->all());
+        Session::flash('success', 'Data berhasil diubah.');
+        return redirect('/kabupaten');
     }
-    public function kabupaten_delete()
+    public function kabupaten_delete($id)
     {
-    }
-    public function prov()
-    {
-        $data = provinsi::where('nama', 'LIKE', '%'.request('q').'%')->get();
-        return response()->json($data);
+        $kabupaten = kabupaten::find($id);
+        $kabupaten->delete();
+        Session::flash('success', 'Data berhasil dihapus.');
+        return redirect('/kabupaten');
     }
     public function kab($id)
     {
-        $data = kabupaten::where('id_prov', $id)->where('nama', 'LIKE', '%'.request('q').'%');
+        $data = kabupaten::where('id_prov', $id)->pluck('nama', 'id')->toArray();
         return response()->json($data);
     }
 }

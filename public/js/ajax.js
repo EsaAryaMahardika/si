@@ -4,43 +4,23 @@ $(document).ready(function () {
             .parent(".alert")
             .fadeOut();
     });
-    $("#prov").select2({
-        placeholder: 'Pilih Provinsi',
-        ajax: {
-            url: "prov",
-            processResults: function ({
-                data
-            }) {
-                return {
-                    results: $.map(data, function(item) {
-                        return {
-                            id: item.id,
-                            text: item.nama
-                        }
-                    })
+    $('#prov').on('change', function() {
+        var id_prov = $(this).val();
+        if (id_prov) {
+            $.ajax({
+                url: 'kab/' + id_prov,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    $('#kab').empty();
+                    $.each(data, function(key, value) {
+                        $('#kab').append('<option value="' + key + '">' + value + '</option>');
+                    });
                 }
-            }
+            });
+        } else {
+            $('#kab').empty();
         }
     });
-    $("#prov").change(function () {
-        let id = $('#prov').val();
-        $("#kab").select2({
-            placeholder: 'Pilih Kabupaten',
-            ajax: {
-                url: "kab/" + id,
-                processResults: function ({
-                    data
-                }) {
-                    return {
-                        results: $.map(data, function (item) {
-                            return {
-                                id: item.id,
-                                text: item.name
-                            }
-                        })
-                    }
-                }
-            }
-        });
-    });
+
 });

@@ -1,4 +1,5 @@
 @extends('layout.admin')
+@section('title', 'Laporan')
 @section('content')
 <table id="report">
     <thead>

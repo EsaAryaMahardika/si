@@ -13,4 +13,12 @@ class kabupaten extends Model
     protected $keytype = 'string';
     public $timestamps = false;
     protected $fillable = ['id', 'id_prov', 'nama'];
+    public function prov()
+    {
+        return $this->belongsTo(provinsi::class, 'id');
+    }
+    public function teknisi()
+    {
+        return $this->hasMany(teknisi::class, 'id_kab');
+    }
 }

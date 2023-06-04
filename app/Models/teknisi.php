@@ -11,4 +11,12 @@ class teknisi extends Model
     protected $table = 'teknisi';
     public $timestamps = false;
     protected $fillable = ['nama', 'tlp', 'id_prov', 'id_kab'];
+    public function prov()
+    {
+        return $this->belongsTo(provinsi::class, 'id');
+    }
+    public function kab()
+    {
+        return $this->belongsTo(kabupaten::class, 'id');
+    }
 }
