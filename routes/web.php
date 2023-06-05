@@ -39,7 +39,6 @@ Route::get('/report', [DBController::class, 'report']);
 
 /* Halaman Aturan */
 Route::get('/rule', [DBController::class, 'rule']);
-Route::post('/i_rule', [DBController::class, 'rule_input']);
 Route::put('/u_rule/{id}', [DBController::class, 'rule_update']);
 Route::delete('/d_rule/{id}', [DBController::class, 'rule_delete']);
 
@@ -73,5 +72,4 @@ Route::put('/u_kabupaten/{id}', [DBController::class, 'kabupaten_update']);
 Route::delete('/d_kabupaten/{id}', [DBController::class, 'kabupaten_delete']);
 
 /* Ajax Wilayah */
-Route::get('prov', [DBController::class, 'prov']);
 Route::get('kab/{id}', [DBController::class, 'kab']);

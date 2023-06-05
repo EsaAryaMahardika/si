@@ -4,6 +4,37 @@
 <div class="some-text">
   <a class="btn btn-input" href="#input">INPUT</a>
 </div>
+<div class="popup" id="input">
+  <div class="popup__content">
+    <form action="/i_engineer" method="post">
+      @csrf
+      <div class="row">
+        <h2>Teknisi</h2>
+        <div class="input-group">
+          <input type="text" placeholder="Nama" name="nama" />
+        </div>
+        <div class="input-group">
+          <input type="number" placeholder="WhatsApp" name="tlp" />
+        </div>
+        <div class="input-group">
+          <select class="prov" name="id_prov">
+            <option value="">Pilih Provinsi</option>
+            @foreach ($prov as $item)
+            <option value="{{ $item->id }}">{{ $item->nama }}</option>
+            @endforeach
+          </select>
+        </div>
+        <div class="input-group">
+          <select class="kab" name="id_kab">
+
+          </select>
+        </div>
+      </div>
+      <a href="#" class="btn">Close</a>
+      <button type="submit" class="btn">Tambah</button>
+    </form>
+  </div>
+</div>
 <table id="engineer">
   <thead>
     <tr>
@@ -21,8 +52,8 @@
       <td>{{ $loop->iteration }}</td>
       <td>{{ $item->nama }}</td>
       <td>{{ $item->tlp }}</td>
-      <td>{{ $item->prov->nama }}</td>
-      <td>{{ $item->kab->nama }}</td>
+      <td>{{ $item->prov['nama'] }}</td>
+      <td>{{ $item->kab['nama'] }}</td>
       <td><a href="#edit{{ $item->id }}" class="btn">Edit</a> | <a href="#delete{{ $item->id }}" class="btn">Hapus</a>
       </td>
     </tr>
@@ -36,22 +67,22 @@
             @method('PUT')
             <div class="row">
               <div class="input-group">
-                <input type="text" placeholder="Nama" name="nama" value="{{ $item->nama }}"/>
+                <input type="text" placeholder="Nama" name="nama" value="{{ $item->nama }}" />
               </div>
               <div class="input-group">
-                <input type="number" placeholder="WhatsApp" name="tlp" value="{{ $item->tlp }}"/>
+                <input type="number" placeholder="WhatsApp" name="tlp" value="{{ $item->tlp }}" />
               </div>
               <div class="input-group">
-                <select name="id_prov" id="prov">
-                  <option value="{{ $item->id_prov }}">{{ $item->prov }}</option>
-                  @foreach ($prov as $item)
-                  <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                <select name="id_prov" class="prov">
+                  <option value="{{ $item->id_prov }}">{{ $item->prov['nama'] }}</option>
+                  @foreach ($prov as $data)
+                  <option value="{{ $data->id }}">{{ $data->nama }}</option>
                   @endforeach
                 </select>
               </div>
               <div class="input-group">
-                <select name="id_kab" id="kab">
-                  <option value="{{ $item->id_kab }}">{{ $item->kab }}</option>
+                <select name="id_kab" class="kab">
+                  <option value="{{ $item->id_kab }}">{{ $item->kab['nama'] }}</option>
                 </select>
               </div>
             </div>
@@ -78,35 +109,4 @@
     @endforeach
   </tbody>
 </table>
-<div class="popup" id="input">
-  <div class="popup__content">
-    <form action="/i_engineer" method="post">
-      @csrf
-      <div class="row">
-        <h2>Teknisi</h2>
-        <div class="input-group">
-          <input type="text" placeholder="Nama" name="nama" />
-        </div>
-        <div class="input-group">
-          <input type="number" placeholder="WhatsApp" name="tlp" />
-        </div>
-        <div class="input-group">
-          <select id="prov" name="id_prov">
-            <option value="">Pilih Provinsi</option>
-            @foreach ($prov as $item)
-            <option value="{{ $item->id }}">{{ $item->nama }}</option>
-            @endforeach
-          </select>
-        </div>
-        <div class="input-group">
-          <select id="kab" name="id_kab">
-
-          </select>
-        </div>
-      </div>
-      <a href="#" class="btn">Close</a>
-      <button type="submit" class="btn">Tambah</button>
-    </form>
-  </div>
-</div>
 @endsection

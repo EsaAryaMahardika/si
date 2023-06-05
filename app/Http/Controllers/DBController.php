@@ -16,6 +16,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 
+use function GuzzleHttp\Promise\all;
+
 class DBController extends Controller
 {
     //<--- Dashboard --->//
@@ -44,6 +46,9 @@ class DBController extends Controller
     public function crash_input(Request $request)
     {
         kerusakan::create($request->all());
+        aturan::create([
+            'id_rusak' => $request->input('id_rusak')
+        ]);
         Session::flash('success', 'Data berhasil ditambahkan.');
         return redirect('/crash');
     }
@@ -66,9 +71,7 @@ class DBController extends Controller
     {
         $prov = provinsi::all();
         $teknisi = teknisi::all();
-        $provinsi = $teknisi->prov;
-        $kabupaten = $teknisi->kab;
-        return view('admin/engineer', compact('teknisi', 'prov', 'provinsi', 'kabupaten'));
+        return view('admin/engineer', compact('teknisi', 'prov'));
     }
     public function engineer_input(Request $request)
     {
@@ -78,9 +81,17 @@ class DBController extends Controller
     }
     public function engineer_update(Request $request, $id)
     {
+        $teknisi = teknisi::find($id);
+        $teknisi->update($request->all());
+        Session::flash('success', 'Data berhasil diubah.');
+        return redirect('/engineer');
     }
-    public function engineer_delete()
+    public function engineer_delete($id)
     {
+        $teknisi = teknisi::find($id);
+        $teknisi->delete();
+        Session::flash('success', 'Data berhasil dihapus.');
+        return redirect('/engineer');
     }
     //<--- Gejala --->//
     public function gejala()
@@ -117,25 +128,25 @@ class DBController extends Controller
     //<--- Aturan --->//
     public function rule()
     {
-        $aturan = aturan::join('kerusakan', 'kerusakan.id', '=', 'aturan.id_rusak')
-            ->join('gejala', 'gejala.id', '=', 'aturan.id_gejala')
-            ->select('aturan.id', 'aturan.id_rusak', 'aturan.id_gejala', 'gejala.keterangan as gejala', 'kerusakan.nama as crash')
-            ->get();
+        $relasi = kerusakan::with('gejala')->get();
+        $aturan = aturan::all();
         $gejala = gejala::all();
-        $crash = kerusakan::all();
-        return view('admin/rule', compact('aturan','gejala','crash'));
+        // $crash = kerusakan::all();
+        return view('admin/rule', compact('relasi','aturan','gejala'));
     }
-    public function rule_input(Request $request)
+    public function rule_update(Request $request, $id)
     {
-        aturan::create($request->all());
-        Session::flash('success', 'Data berhasil ditambahkan.');
+        $aturan = aturan::find($id);
+        $aturan->update($request->all());
+        Session::flash('success', 'Data berhasil diubah.');
         return redirect('/rule');
     }
-    public function rule_update()
+    public function rule_delete($id)
     {
-    }
-    public function rule_delete()
-    {
+        $aturan = aturan::find($id);
+        $aturan->delete();
+        Session::flash('success', 'Data berhasil dihapus.');
+        return redirect('/rule');
     }
     //<--- Tutorial --->//
     public function tutorial()
@@ -182,8 +193,9 @@ class DBController extends Controller
     //<--- User --->//
     public function user()
     {
+        $prov = provinsi::all();
         $pengguna = pengguna::all();
-        return view('admin/user', compact('pengguna'));
+        return view('admin/user', compact('pengguna', 'prov'));
     }
     public function user_update(Request $request, $id)
     {
@@ -228,10 +240,7 @@ class DBController extends Controller
     //<--- Kabupaten --->//
     public function kabupaten()
     {
-        $kabupaten = DB::table('kabupaten')
-            ->join('provinsi', 'provinsi.id', '=', 'kabupaten.id_prov')
-            ->select('kabupaten.id as id_kab', 'kabupaten.nama as nama_kab', 'kabupaten.id_prov', 'provinsi.nama as nama_prov')
-            ->get();
+        $kabupaten = kabupaten::all();
         $provinsi = provinsi::all();
         return view('admin/kabupaten', compact('kabupaten','provinsi'));
     }

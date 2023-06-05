@@ -11,4 +11,12 @@ class pengguna extends Model
     protected $table = 'pengguna';
     public $timestamps = false;
     protected $fillable = ['nama', 'telp', 'id_prov', 'id_kab'];
+    public function prov()
+    {
+        return $this->belongsTo(provinsi::class, 'id_prov', 'id');
+    }
+    public function kab()
+    {
+        return $this->belongsTo(kabupaten::class, 'id_kab', 'id');
+    }
 }

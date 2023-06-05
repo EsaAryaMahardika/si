@@ -17,30 +17,30 @@
         @foreach ($kabupaten as $item)
             <tr>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $item->nama_kab }}</td>
-                <td>{{ $item->nama_prov }}</td>
-                <td><a href="#edit{{ $item->id_kab }}" class="btn">Edit</a>   |   <a href="#delete{{ $item->id_kab }}" class="btn">Hapus</a></td>
+                <td>{{ $item->nama }}</td>
+                <td>{{ $item->prov['nama'] }}</td>
+                <td><a href="#edit{{ $item->id }}" class="btn">Edit</a>   |   <a href="#delete{{ $item->id }}" class="btn">Hapus</a></td>
             </tr>
-            <div class="popup" id="edit{{ $item->id_kab }}">
+            <div class="popup" id="edit{{ $item->id }}">
                 <div class="popup__content">
-                    <form action="u_kabupaten/{{ $item->id_kab }}" method="post">
+                    <form action="u_kabupaten/{{ $item->id }}" method="post">
                         @csrf
                         @method('PUT')
                         <div class="row">
                             <h2>Kabupaten</h2>
                             <div class="input-group">
                                 <select name="id_prov">
-                                    <option value="{{ $item->id_prov }}">{{ $item->nama_prov }}</option>
+                                    <option value="{{ $item->prov['id'] }}">{{ $item->prov['nama'] }}</option>
                                     @foreach ($provinsi as $data)
                                         <option value="{{ $data->id }}">{{ $data->id }} - {{ $data->nama }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="input-group">
-                                <input type="text" placeholder="ID Kabupaten" name="id" value="{{ $item->id_kab }}"/>
+                                <input type="text" placeholder="ID Kabupaten" name="id" value="{{ $item->id }}"/>
                             </div>
                             <div class="input-group">
-                                <input type="text" placeholder="Nama Kabupaten" name="nama" value="{{ $item->nama_kab }}"/>
+                                <input type="text" placeholder="Nama Kabupaten" name="nama" value="{{ $item->nama }}"/>
                             </div>
                         </div>
                         <a href="#" class="btn">Close</a>
@@ -48,13 +48,13 @@
                     </form>
                 </div>
             </div>
-            <div class="popup" id="delete{{ $item->id_kab }}">
+            <div class="popup" id="delete{{ $item->id }}">
                 <div class="popup__content">
-                    <form action="d_kabupaten/{{ $item->id_kab }}" method="POST">
+                    <form action="d_kabupaten/{{ $item->id }}" method="POST">
                         @csrf
                         @method('DELETE')
                         <p class="popup__text">
-                            Yakin ingin hapus {{ $item->nama_kab }}?
+                            Yakin ingin hapus kabupaten {{ $item->nama }}?
                         </p>
                         <a href="#" class="btn">Close</a>
                         <input type="submit" value="Hapus">

@@ -13,10 +13,10 @@ class teknisi extends Model
     protected $fillable = ['nama', 'tlp', 'id_prov', 'id_kab'];
     public function prov()
     {
-        return $this->belongsTo(provinsi::class, 'id');
+        return $this->belongsTo(provinsi::class, 'id_prov', 'id');
     }
     public function kab()
     {
-        return $this->belongsTo(kabupaten::class, 'id');
+        return $this->belongsTo(kabupaten::class, 'id_kab', 'id');
     }
 }

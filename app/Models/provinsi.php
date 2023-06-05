@@ -13,12 +13,4 @@ class provinsi extends Model
     protected $keytype = 'string';
     public $timestamps = false;
     protected $fillable = ['id', 'nama'];
-    public function kab()
-    {
-        return $this->hasMany(kabupaten::class, 'id_prov');
-    }
-    public function teknisi()
-    {
-        return $this->hasMany(teknisi::class, 'id_prov');
-    }
 }

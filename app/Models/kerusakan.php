@@ -13,4 +13,8 @@ class kerusakan extends Model
     protected $keytype = 'string';
     public $timestamps = false;
     protected $fillable = ['id', 'nama', 'deskripsi', 'tutorial_id'];
+    public function gejala()
+    {
+        return $this->belongsToMany(gejala::class, 'aturan', 'id_rusak', 'id_gejala');
+    }
 }
