@@ -66,7 +66,9 @@ class DBController extends Controller
     {
         $prov = provinsi::all();
         $teknisi = teknisi::all();
-        return view('admin/engineer', compact('teknisi', 'prov'));
+        $provinsi = $teknisi->prov;
+        $kabupaten = $teknisi->kab;
+        return view('admin/engineer', compact('teknisi', 'prov', 'provinsi', 'kabupaten'));
     }
     public function engineer_input(Request $request)
     {

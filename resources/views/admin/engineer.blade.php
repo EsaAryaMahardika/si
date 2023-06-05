@@ -21,8 +21,8 @@
       <td>{{ $loop->iteration }}</td>
       <td>{{ $item->nama }}</td>
       <td>{{ $item->tlp }}</td>
-      <td>{{ $item->prov }}</td>
-      <td>{{ $item->kab }}</td>
+      <td>{{ $item->prov->nama }}</td>
+      <td>{{ $item->kab->nama }}</td>
       <td><a href="#edit{{ $item->id }}" class="btn">Edit</a> | <a href="#delete{{ $item->id }}" class="btn">Hapus</a>
       </td>
     </tr>
