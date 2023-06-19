@@ -15,6 +15,7 @@ use App\Models\kabupaten;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 use function GuzzleHttp\Promise\all;
 
@@ -132,7 +133,7 @@ class DBController extends Controller
         $aturan = aturan::all();
         $gejala = gejala::all();
         // $crash = kerusakan::all();
-        return view('admin/rule', compact('relasi','aturan','gejala'));
+        return view('admin/rule', compact('relasi', 'aturan', 'gejala'));
     }
     public function rule_update(Request $request, $id)
     {
@@ -242,7 +243,7 @@ class DBController extends Controller
     {
         $kabupaten = kabupaten::all();
         $provinsi = provinsi::all();
-        return view('admin/kabupaten', compact('kabupaten','provinsi'));
+        return view('admin/kabupaten', compact('kabupaten', 'provinsi'));
     }
     public function kabupaten_input(Request $request)
     {
@@ -264,9 +265,58 @@ class DBController extends Controller
         Session::flash('success', 'Data berhasil dihapus.');
         return redirect('/kabupaten');
     }
+    public function kabupaten_export()
+    {
+        $kabupaten = kabupaten::all();
+        $pdf = Pdf::loadview('admin.export_kabupaten', compact('kabupaten'));
+        return $pdf->download('export-kabupaten.pdf');
+    }
+
     public function kab($id)
     {
         $data = kabupaten::where('id_prov', $id)->pluck('nama', 'id')->toArray();
         return response()->json($data);
+    }
+    public function select()
+    {
+        $gejala = gejala::all();
+        return view('check', compact('gejala'));
+    }
+    public function check(Request $request)
+    {
+        $data = aturan::all();
+        $aturan = [];
+        foreach ($data as $a) {
+            if (!isset($aturan[$a->id_rusak])) {
+                $aturan[$a->id_rusak] = [];
+            }
+            array_push($aturan[$a->id_rusak], $a->id_gejala);
+        }
+        $gejala = [];
+        foreach ($request->input('id') as $jwb) {
+            array_push($gejala, $jwb['id_gejala']);
+        }
+        $hasil = [];
+        foreach ($aturan as $key => $rules) {
+            foreach ($gejala as $value) {
+                if (in_array($value, $rules)) {
+                    if (!isset($hasil[$key])) {
+                        $hasil[$key] = 1;
+                    } else {
+                        $hasil[$key] = $hasil[$key] + 1;
+                    }
+                }
+            }
+        }
+        $penyakit = 0;
+        if (count($hasil) > 0) {
+            $max_keys = array_keys($hasil, max($hasil));
+            $penyakit = $max_keys[0];
+        }
+        laporan::insert([
+            'id_rusak' => $penyakit,
+            'id_user' => $request->input('id_user')
+        ]);
+        return dd($penyakit);
     }
 }

@@ -3,6 +3,7 @@
 @section('content')
 <div class="some-text">
     <a class="btn btn-input" href="#input">INPUT</a>
+    <a class="btn btn-input" href="/export_kabupaten" target="_blank">EXPORT</a>
 </div>
 <table id="kabupaten">
     <thead>

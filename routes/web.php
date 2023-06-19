@@ -70,6 +70,11 @@ Route::get('/kabupaten', [DBController::class, 'kabupaten']);
 Route::post('/i_kabupaten', [DBController::class, 'kabupaten_input']);
 Route::put('/u_kabupaten/{id}', [DBController::class, 'kabupaten_update']);
 Route::delete('/d_kabupaten/{id}', [DBController::class, 'kabupaten_delete']);
+Route::get('/export_kabupaten', [DBController::class, 'kabupaten_export']);
 
 /* Ajax Wilayah */
 Route::get('kab/{id}', [DBController::class, 'kab']);
+
+/* Forward Chaining */
+Route::get('/select', [DBController::class, 'select']);
+Route::post('/check', [DBController::class, 'check']);

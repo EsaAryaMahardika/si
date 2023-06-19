@@ -10,4 +10,5 @@ class laporan extends Model
     use HasFactory;
     protected $table = 'laporan';
     public $timestamps = false;
+    public $guarded = [];
 }
