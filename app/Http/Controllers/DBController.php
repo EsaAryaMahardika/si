@@ -293,8 +293,8 @@ class DBController extends Controller
             array_push($aturan[$a->id_rusak], $a->id_gejala);
         }
         $gejala = [];
-        foreach ($request->input('id') as $jwb) {
-            array_push($gejala, $jwb['id_gejala']);
+        foreach ($request->input('id') as $key) {
+            array_push($gejala, $key);
         }
         $hasil = [];
         foreach ($aturan as $key => $rules) {
@@ -314,9 +314,9 @@ class DBController extends Controller
             $penyakit = $max_keys[0];
         }
         laporan::insert([
-            'id_rusak' => $penyakit,
-            'id_user' => $request->input('id_user')
+            'id_rusak' => $penyakit
         ]);
-        return dd($penyakit);
+        $hasil = kerusakan::where('id', $penyakit)->value('nama');
+        return view('laporan', compact('hasil'));
     }
 }

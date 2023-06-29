@@ -11,4 +11,7 @@ class laporan extends Model
     protected $table = 'laporan';
     public $timestamps = false;
     public $guarded = [];
+    function crash() {
+        return $this->belongsTo(kerusakan::class, 'id_rusak', 'id');
+    }
 }
