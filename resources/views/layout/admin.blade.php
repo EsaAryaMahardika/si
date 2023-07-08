@@ -32,8 +32,8 @@
                         Kerusakan</span></a></li>
             <li class="has-subnav"><a href="/gejala"><i class="fa fa-tasks fa-2x"></i><span class="nav-text">
                         Gejala</span></a></li>
-            {{-- <li class="has-subnav"><a href="/report"><i class="fa fa-book fa-2x"></i><span class="nav-text">
-                        Laporan</span></a></li> --}}
+            <li class="has-subnav"><a href="/report"><i class="fa fa-book fa-2x"></i><span class="nav-text">
+                        Laporan</span></a></li>
             <li class="has-subnav"><a href="/rule"><i class="fa fa-map-signs fa-2x"></i><span class="nav-text">
                         Aturan</span></a></li>
             <li class="has-subnav"><a href="/tutorial"><i class="fa fa-cogs fa-2x"></i><span class="nav-text">
