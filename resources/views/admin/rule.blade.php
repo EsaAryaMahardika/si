@@ -16,8 +16,8 @@
             <td>{{ $item->id }}</td>
             <td>{{ $item->nama }}</td>
             <td>
-                @foreach ($item->gejala as $item)
-                    - {{ $item->keterangan }} <br>
+                @foreach ($item->gejala as $data)
+                    - {{ $data->keterangan }} <br>
                 @endforeach
             </td>
             <td>
@@ -29,31 +29,31 @@
             <div class="popup__content">
                 <div class="row">
                     <h2>Aturan</h2>
-                    {{-- <form action="u_rule/{{ $item->id }}" method="POST">
+                    <form action="u_rule/{{ $item->id }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="row">
                             <div class="input-group">
                                 <select name="id_rusak">
                                     <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                                    @foreach ($relasi as $item)
-                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                    @foreach ($relasi as $rusak)
+                                        <option value="{{ $rusak->id }}">{{ $rusak->nama }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="input-group">
                                 <select name="id_gejala[]" class="gejala" multiple="multiple">
-                                    @foreach ($item->gejala as $data)
-                                    <option selected value="{{ $data->id }}">{{ $data->keterangan }}</option>
-                                    @endforeach
-                                    @foreach ($gejala as $item)
-                                    <option value="{{ $item->id }}">{{ $item->keterangan }}</option>
+                                    @foreach ($gejala as $list)
+                                        <option value="{{ $list->id }}" 
+                                            {{ in_array($list->id, $item->gejala->pluck('id')->toArray()) ? 'selected' : '' }}>
+                                            {{ $list->keterangan }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
-                        </div> --}}
+                        </div>
                         <a href="#" class="btn">Close</a>
-                        {{-- <button type="submit" class="btn">Ubah</button> --}}
+                        <button type="submit" class="btn">Ubah</button>
                     </form> 
                 </div>
             </div>

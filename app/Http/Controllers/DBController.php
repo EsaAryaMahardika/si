@@ -138,7 +138,13 @@ class DBController extends Controller
     public function rule_update(Request $request, $id)
     {
         $aturan = aturan::find($id);
-        $aturan->update($request->all());
+        $id_gejala = $request->input('id_gejala');
+        $id_rusak = $request->input('id_rusak');
+
+        $aturan->id_gejala = $id_gejala;
+        $aturan->id_rusak = $id_rusak;
+
+        $aturan->save();
         Session::flash('success', 'Data berhasil diubah.');
         return redirect('/rule');
     }
